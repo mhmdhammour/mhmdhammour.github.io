@@ -1,0 +1,21 @@
+---
+// Shows a visible "To add" box while site.showTodos is true; renders nothing otherwise.
+import { site } from '../site.config';
+interface Props { text?: string; inline?: boolean }
+const { text = '', inline = false } = Astro.props;
+const label = text.replace(/^TODO:\s*/, '');
+---
+{site.showTodos && (inline
+  ? <span class="todo todo--inline">To add: {label}</span>
+  : <p class="todo">To add: {label}</p>)}
+<style>
+  .todo {
+    border: 1.5px dashed var(--maroon-soft);
+    background: var(--panel);
+    color: var(--maroon-deep);
+    border-radius: var(--radius-sm);
+    padding: 0.6rem 0.8rem;
+    font-size: var(--text-sm);
+  }
+  .todo--inline { display: inline-block; padding: 0.15rem 0.5rem; }
+</style>

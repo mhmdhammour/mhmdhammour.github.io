@@ -1,0 +1,13 @@
+---
+// Concentric ring motif, echoing the LinkedIn banner. Decorative only; never place behind body text.
+interface Props { size?: number; class?: string; count?: number }
+const { size = 520, class: cls, count = 6 } = Astro.props;
+const c = size / 2;
+const step = (c - 4) / count;
+const rings = Array.from({ length: count }, (_, i) => c - 2 - i * step);
+---
+<svg class:list={['rings', cls]} aria-hidden="true" focusable="false" width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+  {rings.map((r, i) => (
+    <circle cx={c} cy={c} r={r} fill="none" stroke="var(--maroon)" stroke-width="1.25" stroke-opacity={0.08 + i * 0.03} />
+  ))}
+</svg>

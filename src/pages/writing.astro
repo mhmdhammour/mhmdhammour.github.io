@@ -1,0 +1,109 @@
+---
+import { getCollection, getEntry } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import PageHeader from '../components/PageHeader.astro';
+import Ext from '../components/Ext.astro';
+import Todo from '../components/Todo.astro';
+import RingDivider from '../components/RingDivider.astro';
+import { formatMonth, formatRange, isTodo } from '../lib/format';
+
+const all = (await getCollection('writing')).sort((a, b) => b.data.date.localeCompare(a.data.date));
+const thesis = all.find((w) => w.data.featured);
+const pieces = all.filter((w) => !w.data.featured);
+const tamam = await getEntry('roles', 'tamam');
+
+const interests = [
+  { title: 'Assessment', text: 'Teacher judgment, rigor, and the difference between visible output and deep understanding.' },
+  { title: 'School leadership', text: 'The gap between policy and implementation, and accreditation as a driver of change.' },
+];
+---
+<Base title="Writing & Research" description="Mohammad Hammour's M.Ed. dissertation on external accreditation and school improvement, plus articles, an interview, and a conference presentation.">
+  <PageHeader identity="The Writer & Researcher" title="Writing & Research" lede="I write about learning and teaching for Arabic-speaking educators, and I research how schools turn external feedback into improvement." />
+
+  {thesis && (
+    <section class="section" id="thesis" aria-labelledby="thesis-heading">
+      <div class="wrap">
+        <article class="thesis">
+          <p class="eyebrow">{thesis.data.outlet} · {thesis.data.date}</p>
+          <h2 id="thesis-heading">{thesis.data.title}</h2>
+          <p class="summary">{thesis.data.summary}</p>
+          {thesis.data.url && <p><Ext href={thesis.data.url} class="btn">Read the dissertation</Ext></p>}
+        </article>
+      </div>
+    </section>
+  )}
+
+  <section class="section section--tint" aria-labelledby="interests-heading">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">Research interests</p>
+        <h2 id="interests-heading">Questions I keep returning to</h2>
+      </div>
+      <div class="grid grid--2">
+        {interests.map((i) => (
+          <div class="card"><h3>{i.title}</h3><p class="muted">{i.text}</p></div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="writing" aria-labelledby="writing-heading">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">Writing</p>
+        <h2 id="writing-heading">Articles, interview, and conference work</h2>
+      </div>
+      <ol class="pieces">
+        {pieces.map((w) => (
+          <li class="piece">
+            <p class="when">{formatMonth(w.data.date)}</p>
+            <div class="piece-body">
+              <h3>{w.data.url ? <Ext href={w.data.url}>{w.data.title}</Ext> : w.data.title}</h3>
+              {w.data.titleAr && <p class="ar" lang="ar" dir="rtl">{w.data.titleAr}</p>}
+              <p class="meta"><span class="tag">{w.data.type}</span><span class="tag">{w.data.language}</span><span class="muted">{w.data.outlet}</span></p>
+              {isTodo(w.data.summary) ? <Todo text={w.data.summary} /> : <p>{w.data.summary}</p>}
+            </div>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <RingDivider />
+
+  {tamam && (
+    <section class="section" aria-labelledby="research-exp-heading">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow">Research experience</p>
+          <h2 id="research-exp-heading">{tamam.data.title}</h2>
+          <p><Ext href={tamam.data.orgUrl ?? ''}>{tamam.data.org}</Ext> · {formatRange(tamam.data.start!, tamam.data.end)} · {tamam.data.location}</p>
+        </div>
+        <div class="prose">{tamam.data.highlights.map((h) => <p>{h}</p>)}</div>
+      </div>
+    </section>
+  )}
+</Base>
+
+<style>
+  .thesis {
+    border: 1px solid var(--maroon-soft); border-top: 6px solid var(--maroon);
+    border-radius: var(--radius); padding: clamp(1.5rem, 4vw, 3rem);
+    display: grid; gap: var(--space-4); background: var(--white); box-shadow: var(--shadow);
+  }
+  .thesis h2 { font-size: var(--text-2xl); max-width: 24ch; }
+  .thesis .summary { font-size: var(--text-md); max-width: var(--measure); line-height: 1.6; }
+  .thesis .btn { margin-top: var(--space-2); }
+
+  .pieces { list-style: none; padding: 0; display: grid; }
+  .piece { display: grid; grid-template-columns: 10rem minmax(0, 1fr); gap: var(--space-5); padding-block: var(--space-5); border-bottom: 1px solid var(--line); }
+  .piece:first-child { padding-top: 0; }
+  .piece:last-child { border-bottom: 0; }
+  .piece-body { display: grid; gap: var(--space-2); max-width: var(--measure); }
+  .piece h3 a { color: var(--ink); text-decoration-color: var(--maroon-soft); }
+  .piece h3 a:hover { color: var(--maroon); }
+  .ar { font-size: 1.15rem; line-height: 1.8; color: var(--muted); }
+  .meta { display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: center; font-size: var(--text-sm); }
+  .when { color: var(--maroon); font-weight: 600; font-size: var(--text-sm); padding-top: 0.25rem; }
+  @media (max-width: 640px) { .piece { grid-template-columns: 1fr; gap: var(--space-1); } }
+</style>

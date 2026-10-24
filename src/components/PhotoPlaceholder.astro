@@ -1,0 +1,24 @@
+---
+// Stand-in for a photo that has not been supplied yet. Hidden when site.showTodos is false.
+import { site } from '../site.config';
+interface Props { label?: string }
+const { label = 'Photo to come' } = Astro.props;
+---
+{site.showTodos && (
+  <div class="ph" role="img" aria-label={`Photo placeholder: ${label}`}>
+    <svg aria-hidden="true" viewBox="0 0 24 24" width="28" height="28"><path d="M4 7h3l2-2h6l2 2h3v12H4z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><circle cx="12" cy="13" r="3.5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+    <span>Photo to add</span>
+    <small>{label}</small>
+  </div>
+)}
+<style>
+  .ph {
+    aspect-ratio: 4 / 3; width: 100%;
+    border: 1.5px dashed var(--maroon-soft); border-radius: var(--radius-sm);
+    background: var(--panel); color: var(--maroon);
+    display: grid; place-content: center; justify-items: center; gap: 0.25rem;
+    text-align: center; padding: 1rem;
+  }
+  .ph span { font-weight: 600; font-size: var(--text-sm); }
+  .ph small { color: var(--muted); font-size: 0.8rem; max-width: 26ch; }
+</style>

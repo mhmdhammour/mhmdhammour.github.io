@@ -1,0 +1,9 @@
+---
+// External link: opens in a new tab, with an icon and screen-reader text.
+interface Props { href: string; class?: string }
+const { href, class: cls } = Astro.props;
+---
+<style>
+  .ext-icon { display: inline-block; margin-left: 0.3em; vertical-align: 0.05em; opacity: 0.75; }
+</style>
+<a href={href} target="_blank" rel="noopener" class:list={["ext", cls]}><slot /><svg class="ext-icon" aria-hidden="true" viewBox="0 0 12 12" width="11" height="11"><path d="M4.5 2H2v8h8V7.5M7 2h3v3M10 2 5.5 6.5" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="sr-only"> (opens in new tab)</span></a>

@@ -1,0 +1,185 @@
+---
+import { getCollection, getEntry } from 'astro:content';
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import PageHeader from '../components/PageHeader.astro';
+import Ext from '../components/Ext.astro';
+import Todo from '../components/Todo.astro';
+import PhotoPlaceholder from '../components/PhotoPlaceholder.astro';
+import RingDivider from '../components/RingDivider.astro';
+import { site } from '../site.config';
+import { formatMonth, formatRange, isTodo } from '../lib/format';
+import certificate from '../../assets/raw/iben-workshop-leader-certificate.png';
+import facilitating from '../../assets/raw/facilitating-professional-learning.jpg';
+import floorSession from '../../assets/raw/workshop-floor-session.jpg';
+import conceptsSession from '../../assets/raw/workshop-key-concepts-session.jpg';
+
+const coordinator = await getEntry('roles', 'aia-math-coordinator');
+const external = (await getCollection('roles', (r) => r.data.group === 'external' && !r.data.draft))
+  .sort((a, b) => a.data.order - b.data.order);
+const workshops = (await getCollection('workshops', (w) => !w.data.draft))
+  .sort((a, b) => b.data.date.localeCompare(a.data.date));
+
+const topics = [
+  'Inquiry-based learning',
+  'Concept-based learning',
+  'PYP elements: central ideas, specified concepts, unit planning, transdisciplinarity, and agency',
+  'Evidencing learning and authentic assessment',
+  'Technology integration',
+];
+
+const gallery = [
+  { src: facilitating, position: 'top', alt: 'Mohammad presenting a discussion slide to a group of teachers during a professional learning session' },
+  { src: floorSession, position: 'center', alt: 'Mohammad moving between groups of educators working together on the floor during a workshop' },
+  { src: conceptsSession, position: 'center', alt: 'Mohammad presenting a slide on concepts to teachers seated at classroom desks' },
+];
+---
+<Base title="Leadership & Learning" description="Mohammad Hammour's coordination work, whole-school contributions, external roles with IBEN, CIS, and Global Schools, and the workshops he has led.">
+  <PageHeader identity="The Trainer" title="Leadership & Learning" lede="Having sat through a great deal of professional development, I know what teachers value. I design sessions that work like a good classroom: participants explore new ideas while experiencing the pedagogy they are learning about." />
+
+  <section class="section gallery-section" aria-label="Facilitating professional learning">
+    <div class="wrap">
+      <ul class="gallery">
+        {gallery.map((g) => (
+          <li><Image src={g.src} alt={g.alt} widths={[400, 640, 800]} sizes="(max-width: 700px) 100vw, 33vw" width={800} height={600} fit="cover" position={g.position} class="photo" format="webp" quality={72} /></li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="coordination-heading">
+    <div class="wrap two-col">
+      <div class="section-head">
+        <p class="eyebrow">Coordination</p>
+        <h2 id="coordination-heading">{coordinator?.data.title}</h2>
+        <p><Ext href={coordinator?.data.orgUrl ?? ''}>{coordinator?.data.org}</Ext> · {coordinator && formatRange(coordinator.data.start!, coordinator.data.end)}</p>
+      </div>
+      <ul class="ticks">
+        {coordinator?.data.highlights.map((h) => <li>{h}</li>)}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section section--tint" aria-labelledby="whole-school-heading">
+    <div class="wrap two-col">
+      <div class="section-head">
+        <p class="eyebrow">Whole-school contributions</p>
+        <h2 id="whole-school-heading">At Qatar Foundation</h2>
+      </div>
+      <ul class="ticks">
+        <li>I represent teachers' voice in leadership decisions as a member of the Teachers' Forum.</li>
+        <li>I serve on the response team for the school's academic action plans.</li>
+        <li>I support preparation for IB and CIS external evaluation, aligning practice with the IB Programme Standards and Practices.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="external-heading">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">External professional roles</p>
+        <h2 id="external-heading">Beyond my school</h2>
+      </div>
+      <div class="external">
+        {external.map((r, i) => (
+          <article class:list={['card', { 'card--feature': i === 0 }]}>
+            <div class="external-body">
+              <h3>{r.data.title}</h3>
+              <p class="muted">{r.data.org}{r.data.start && ` · since ${formatMonth(r.data.start)}`}</p>
+              <ul class="ticks">{r.data.highlights.map((h) => <li>{h}</li>)}</ul>
+            </div>
+            {i === 0 && (
+              <figure class="cert">
+                <Image src={certificate} alt="IB training certificate confirming that Mohammad Hammour completed IB Educator Network development as a Workshop Leader" width={360} format="webp" quality={80} />
+                <figcaption class="muted">IBEN Workshop Leader certificate</figcaption>
+              </figure>
+            )}
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <RingDivider />
+
+  <section class="section" id="workshops" aria-labelledby="workshops-heading">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">Workshops and presentations</p>
+        <h2 id="workshops-heading">Sessions I have led</h2>
+        <p>Newest first.</p>
+      </div>
+      <ol class="sessions">
+        {workshops.map((w) => (
+          <li class="session">
+            <div class="session-media">
+              {w.data.image
+                ? <Image src={w.data.image} alt={w.data.imageAlt ?? ''} width={640} height={480} fit="cover" class="photo" format="webp" quality={72} />
+                : <PhotoPlaceholder label={w.data.photoNeeded} />}
+            </div>
+            <div class="session-body">
+              <p class="when">{formatMonth(w.data.date)}</p>
+              <h3>{w.data.title}</h3>
+              <p class="muted">{w.data.event}, {w.data.host}</p>
+              <p class="meta">
+                <span class="tag">{w.data.role}</span>
+                {w.data.format && <span class="tag">{w.data.format}</span>}
+                {w.data.participants && (isTodo(w.data.participants)
+                  ? <Todo text={w.data.participants} inline />
+                  : <span class="tag">{w.data.participants}</span>)}
+              </p>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <section class="section section--tint" aria-labelledby="topics-heading">
+    <div class="wrap two-col">
+      <div class="section-head">
+        <p class="eyebrow">Topics I facilitate</p>
+        <h2 id="topics-heading">Bring this to your school</h2>
+        <p>If your school is planning professional learning on any of these topics, email me at <a href={`mailto:${site.email}`}>{site.email}</a>.</p>
+      </div>
+      <ul class="ticks">
+        {topics.map((t) => <li>{t}</li>)}
+      </ul>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .gallery-section { padding-block: var(--space-6) 0; }
+  .gallery { list-style: none; padding: 0; display: grid; gap: var(--space-4); grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  @media (max-width: 700px) { .gallery { grid-template-columns: 1fr; } .gallery li:nth-child(n+2) { display: none; } }
+
+  .two-col { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); gap: var(--space-6); align-items: start; }
+  .two-col .section-head { margin-bottom: 0; }
+  @media (max-width: 820px) { .two-col { grid-template-columns: 1fr; } }
+
+  .ticks { list-style: none; padding: 0; display: grid; gap: var(--space-3); }
+  .ticks li { position: relative; padding-left: 1.6rem; }
+  .ticks li::before {
+    content: ''; position: absolute; left: 0; top: 0.55em;
+    width: 0.7rem; height: 0.7rem; border-radius: 50%;
+    border: 1.5px solid var(--maroon); box-shadow: inset 0 0 0 2px var(--white), inset 0 0 0 4px var(--maroon-soft);
+  }
+
+  .external { display: grid; gap: var(--space-5); grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  @media (max-width: 700px) { .external { grid-template-columns: 1fr; } }
+  .card--feature { grid-column: 1 / -1; grid-template-columns: minmax(0, 1fr) auto; gap: var(--space-6); align-items: center; border-color: var(--maroon-soft); }
+  .external-body { display: grid; gap: var(--space-3); }
+  .cert { margin: 0; display: grid; gap: var(--space-2); width: 220px; }
+  .cert img { border: 1px solid var(--line); border-radius: var(--radius-sm); }
+  .cert figcaption { font-size: var(--text-sm); }
+  @media (max-width: 700px) { .card--feature { grid-template-columns: 1fr; } }
+
+  .sessions { list-style: none; padding: 0; display: grid; gap: var(--space-5); }
+  .session { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: var(--space-5); align-items: center; padding-bottom: var(--space-5); border-bottom: 1px solid var(--line); }
+  .session:last-child { border-bottom: 0; }
+  .session-body { display: grid; gap: var(--space-2); }
+  .when { color: var(--maroon); font-weight: 600; font-size: var(--text-sm); }
+  .meta { display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: center; }
+  @media (max-width: 640px) { .session { grid-template-columns: 1fr; } }
+</style>

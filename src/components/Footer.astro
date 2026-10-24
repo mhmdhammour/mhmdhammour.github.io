@@ -1,0 +1,26 @@
+---
+import { site } from '../site.config';
+import Ext from './Ext.astro';
+---
+<footer class="site-footer">
+  <div class="wrap inner">
+    <div class="who">
+      <p class="name">Mohammad Hammour</p>
+      <p class="muted">{site.descriptor}</p>
+      <p class="muted">Doha, Qatar</p>
+    </div>
+    <ul class="links" aria-label="Contact">
+      <li><a href={`mailto:${site.email}`}>{site.email}</a></li>
+      <li><Ext href={site.linkedin}>LinkedIn</Ext></li>
+      <li><Ext href={site.whatsapp}>WhatsApp</Ext></li>
+      <li><a class="btn btn--ghost" href={site.cv} download>Download CV</a></li>
+    </ul>
+  </div>
+</footer>
+<style>
+  .site-footer { background: var(--blush); border-top: 1px solid var(--line); margin-top: var(--space-8); }
+  .inner { padding-block: var(--space-7); display: flex; flex-wrap: wrap; gap: var(--space-5) var(--space-7); justify-content: space-between; align-items: flex-start; }
+  .name { font-family: var(--font-display); font-weight: 600; font-size: var(--text-md); }
+  .links { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: var(--space-3) var(--space-5); align-items: center; }
+  .links a:not(.btn) { overflow-wrap: anywhere; }
+</style>

@@ -1,0 +1,32 @@
+---
+// Circular headshot with a thin white ring and a maroon outer ring, matching the CV.
+import { Image } from 'astro:assets';
+import Rings from './Rings.astro';
+import headshot from '../../assets/raw/headshot-maroon.jpg';
+interface Props { size?: number; rings?: boolean; eager?: boolean }
+const { size = 280, rings = true, eager = false } = Astro.props;
+---
+<div class:list={['headshot', { 'headshot--rings': rings }]} style={`--size:${size}px`}>
+  {rings && <Rings size={Math.round(size * 1.5)} class="headshot-rings" />}
+  <div class="frame">
+    <Image src={headshot} alt="Portrait of Mohammad Hammour, smiling, in a black blazer against a maroon backdrop"
+      widths={[size, size * 2]} sizes={`${size}px`} width={size} height={size}
+      loading={eager ? 'eager' : 'lazy'} fetchpriority={eager ? 'high' : 'auto'} format="webp" quality={80}
+      fit="cover" />
+  </div>
+</div>
+<style>
+  /* With rings, the box is 1.5x the photo so the rings never spill into neighboring text */
+  .headshot { position: relative; width: var(--size); max-width: 80vw; aspect-ratio: 1; display: grid; place-items: center; }
+  .headshot--rings { width: calc(var(--size) * 1.5); }
+  .headshot :global(.headshot-rings) { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+  .frame {
+    position: relative; z-index: 1;
+    width: 100%; aspect-ratio: 1; border-radius: 50%; overflow: hidden;
+    border: 5px solid var(--white);
+    box-shadow: 0 0 0 4px var(--maroon), var(--shadow);
+    background: var(--maroon);
+  }
+  .headshot--rings .frame { width: 66.6%; }
+  .frame img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%; }
+</style>

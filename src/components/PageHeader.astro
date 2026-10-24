@@ -1,0 +1,24 @@
+---
+// Top of each inner page: identity eyebrow (from the original portfolio), title, and lede.
+import Rings from './Rings.astro';
+interface Props { identity: string; title: string; lede: string }
+const { identity, title, lede } = Astro.props;
+---
+<section class="page-header">
+  <Rings size={460} class="ph-rings" count={7} />
+  <div class="wrap inner fade-in">
+    <p class="eyebrow">{identity}</p>
+    <h1>{title}</h1>
+    <p class="lede">{lede}</p>
+    <slot />
+  </div>
+</section>
+<style>
+  .page-header { position: relative; overflow: hidden; background: var(--blush); border-bottom: 1px solid var(--line); }
+  .inner { position: relative; z-index: 1; padding-block: var(--space-8) var(--space-7); display: grid; gap: var(--space-4); }
+  .inner > * { max-width: 46rem; }
+  .inner .lede { color: var(--muted); }
+  /* Rings sit in the empty right-hand area only, never behind the text column */
+  .page-header :global(.ph-rings) { position: absolute; right: -140px; top: 50%; translate: 0 -50%; z-index: 0; }
+  @media (max-width: 1100px) { .page-header :global(.ph-rings) { display: none; } }
+</style>

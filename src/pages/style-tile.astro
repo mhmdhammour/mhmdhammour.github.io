@@ -1,0 +1,122 @@
+---
+// Design review page for Checkpoint 2. Not linked from the nav and excluded from search engines and the sitemap.
+import Base from '../layouts/Base.astro';
+import Headshot from '../components/Headshot.astro';
+import Rings from '../components/Rings.astro';
+import RingDivider from '../components/RingDivider.astro';
+import PhotoPlaceholder from '../components/PhotoPlaceholder.astro';
+import Todo from '../components/Todo.astro';
+import Ext from '../components/Ext.astro';
+
+const colors = [
+  { name: 'Maroon', token: '--maroon', hex: '#7B2232', on: 'white', note: 'Primary: links, buttons, accents. White text 9.9:1' },
+  { name: 'Deep maroon', token: '--maroon-deep', hex: '#5E1824', on: 'white', note: 'Hover states, emphasis. White text 12.9:1' },
+  { name: 'Soft maroon', token: '--maroon-soft', hex: '#A3495A', on: 'white', note: 'Focus rings, borders, accents. White text 5.7:1' },
+  { name: 'Blush', token: '--blush', hex: '#F6EEEF', on: 'ink', note: 'Page headers, footer. Ink 13.6:1, muted 6.6:1' },
+  { name: 'Light panel', token: '--panel', hex: '#FBF6F6', on: 'ink', note: 'Alternate sections. Muted text 7.0:1' },
+  { name: 'Ink', token: '--ink', hex: '#2A2224', on: 'white', note: 'Body text. 15.5:1 on white' },
+  { name: 'Muted', token: '--muted', hex: '#5C5254', on: 'white', note: 'Secondary text. 7.5:1 on white' },
+  { name: 'White', token: '--white', hex: '#FFFFFF', on: 'ink', note: 'Main background' },
+];
+const scale = [
+  { token: '--text-2xl', label: 'Page title', sample: 'Leadership & Learning', display: true },
+  { token: '--text-xl', label: 'Section heading', sample: 'What inquiry looks like in my classroom', display: true },
+  { token: '--text-lg', label: 'Tagline and stats', sample: 'Nearly 700 educators', display: true },
+  { token: '--text-md', label: 'Card heading, lede', sample: 'Building trust and relationships', display: true },
+  { token: '--text-base', label: 'Body (Inter, 17px)', sample: 'I run leveled RWI Fresh Start groups and individualized language support to close gaps for students with diverse needs.', display: false },
+  { token: '--text-sm', label: 'Labels and dates', sample: 'JANUARY 2025 · IB DAY', display: false },
+];
+---
+<Base title="Style tile" description="Design review page for Mohammad Hammour's portfolio." noindex>
+  <section class="section">
+    <div class="wrap tile">
+      <div class="section-head">
+        <p class="eyebrow">Checkpoint 2 · Design review</p>
+        <h1>Style tile</h1>
+        <p>The building blocks every page uses. Colors and fonts match the updated CV. Contrast ratios are measured against WCAG AA (4.5:1 minimum for body text).</p>
+      </div>
+
+      <h2>Color</h2>
+      <ul class="swatches">
+        {colors.map((c) => (
+          <li>
+            <div class="chip" style={`background:var(${c.token}); color:var(--${c.on === 'white' ? 'white' : 'ink'})`}>Aa</div>
+            <p><strong>{c.name}</strong> <code>{c.hex}</code></p>
+            <p class="muted small">{c.note}</p>
+          </li>
+        ))}
+      </ul>
+
+      <h2>Type</h2>
+      <p class="muted">Display: Source Serif 4 at weight 600. Body: Inter, matching the CV. Arabic: Noto Naskh Arabic. All self-hosted.</p>
+      <ul class="scale">
+        {scale.map((s) => (
+          <li>
+            <span class="muted small">{s.label}</span>
+            <span style={`font-size:var(${s.token}); font-family:var(${s.display ? '--font-display' : '--font-body'}); font-weight:${s.display ? 600 : 400}; line-height:1.25`}>{s.sample}</span>
+          </li>
+        ))}
+        <li>
+          <span class="muted small">Arabic title</span>
+          <span lang="ar" dir="rtl" style="font-size:1.15rem">تأثير التتالي: كيف يسهم رفاه المعلّمين في نجاح المتعلّمين؟</span>
+        </li>
+      </ul>
+
+      <h2>Buttons and links</h2>
+      <div class="row">
+        <a class="btn" href="#">See my teaching</a>
+        <a class="btn btn--ghost" href="#">Download CV</a>
+        <a href="#">Internal link</a>
+        <Ext href="https://www.qf.org.qa/">External link</Ext>
+      </div>
+
+      <h2>Cards</h2>
+      <div class="grid grid--3">
+        <a class="card card--link" href="#">
+          <p class="stat">Three consecutive IB Days</p>
+          <p class="muted">Presented at the Qatar IB Association of Schools IB Day each year from 2023 to 2025.</p>
+          <span class="more">See the sessions →</span>
+        </a>
+        <div class="card">
+          <span class="tag">Co-facilitator</span>
+          <h3>Opening Mind, Heart, and Will: Theory U</h3>
+          <p class="muted">IBEN webinar, International Baccalaureate Educator Network</p>
+        </div>
+        <div class="card">
+          <h3>Content still to add</h3>
+          <Todo text="TODO: shown as a dashed box until filled in, hidden at launch" />
+          <PhotoPlaceholder label="Photo placeholder, same 4:3 ratio as real photos" />
+        </div>
+      </div>
+
+      <h2>Headshot treatment</h2>
+      <div class="row center">
+        <Headshot size={220} />
+        <Headshot size={120} rings={false} />
+      </div>
+      <p class="muted">Circular crop, thin white ring, maroon outer ring, as on the CV. Rings appear only behind the hero headshot.</p>
+
+      <h2>Ring motif</h2>
+      <div class="row center">
+        <Rings size={220} />
+        <div style="flex:1; min-width:240px"><RingDivider /></div>
+      </div>
+      <p class="muted">Used behind the headshot, at the edge of page headers on wide screens, and as a section divider. Never behind text.</p>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .tile { display: grid; gap: var(--space-5); }
+  .tile > h2 { margin-top: var(--space-6); padding-top: var(--space-5); border-top: 1px solid var(--line); }
+  .swatches { list-style: none; padding: 0; display: grid; gap: var(--space-4); grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
+  .chip { height: 84px; border-radius: var(--radius-sm); border: 1px solid var(--line); display: grid; place-items: center; font-family: var(--font-display); font-size: 1.6rem; margin-bottom: var(--space-2); }
+  .small { font-size: var(--text-sm); }
+  code { font-size: 0.85em; color: var(--muted); }
+  .scale { list-style: none; padding: 0; display: grid; gap: var(--space-4); }
+  .scale li { display: grid; grid-template-columns: 11rem minmax(0, 1fr); gap: var(--space-4); align-items: baseline; }
+  @media (max-width: 640px) { .scale li { grid-template-columns: 1fr; gap: 0; } }
+  .row { display: flex; flex-wrap: wrap; gap: var(--space-5); align-items: center; }
+  .center { justify-content: flex-start; }
+  .stat { font-family: var(--font-display); font-size: var(--text-lg); font-weight: 600; color: var(--maroon); line-height: 1.2; }
+</style>
