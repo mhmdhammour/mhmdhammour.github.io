@@ -9,7 +9,7 @@ export const site = {
   cv: '/Mohammad-Hammour-CV.pdf',
   // While true, missing content shows as a dashed "To add" box so you can see the gaps.
   // Set to false before launch to hide every unfinished item.
-  showTodos: true,
+  showTodos: false,
 };
 
 export const nav = [

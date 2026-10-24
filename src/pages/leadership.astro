@@ -111,12 +111,12 @@ const gallery = [
       </div>
       <ol class="sessions">
         {workshops.map((w) => (
-          <li class="session">
-            <div class="session-media">
+          <li class:list={["session", { "session--text": !w.data.image && !site.showTodos }]}>
+            {(w.data.image || site.showTodos) && <div class="session-media">
               {w.data.image
                 ? <Image src={w.data.image} alt={w.data.imageAlt ?? ''} width={640} height={480} fit="cover" class="photo" format="webp" quality={72} />
                 : <PhotoPlaceholder label={w.data.photoNeeded} />}
-            </div>
+            </div>}
             <div class="session-body">
               <p class="when">{formatMonth(w.data.date)}</p>
               <h3>{w.data.title}</h3>
@@ -178,6 +178,7 @@ const gallery = [
   .sessions { list-style: none; padding: 0; display: grid; gap: var(--space-5); }
   .session { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: var(--space-5); align-items: center; padding-bottom: var(--space-5); border-bottom: 1px solid var(--line); }
   .session:last-child { border-bottom: 0; }
+  .session--text { grid-template-columns: 1fr; }
   .session-body { display: grid; gap: var(--space-2); }
   .when { color: var(--maroon); font-weight: 600; font-size: var(--text-sm); }
   .meta { display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: center; }

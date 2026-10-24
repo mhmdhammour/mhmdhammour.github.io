@@ -9,9 +9,13 @@ import PhotoPlaceholder from '../components/PhotoPlaceholder.astro';
 import RingDivider from '../components/RingDivider.astro';
 import philosophy from '../content/philosophy.json';
 import { formatRange, isTodo } from '../lib/format';
+import { site } from '../site.config';
 
 const snapshots = (await getCollection('snapshots')).sort((a, b) => a.data.order - b.data.order);
-const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
+// With TODOs hidden, a project shows only once at least one of its fields is filled in.
+const projects = (await getCollection('projects'))
+  .filter((p) => site.showTodos || p.data.image || ![p.data.context, p.data.studentsDid, p.data.learning].every((f) => isTodo(f)))
+  .sort((a, b) => a.data.order - b.data.order);
 const roles = (await getCollection('roles', (r) => !r.data.draft && (r.data.group === 'school' || r.data.group === 'earlier')))
   .sort((a, b) => a.data.order - b.data.order);
 ---
@@ -75,7 +79,7 @@ const roles = (await getCollection('roles', (r) => !r.data.draft && (r.data.grou
 
   <RingDivider />
 
-  <section class="section" aria-labelledby="projects-heading">
+  {projects.length > 0 && <section class="section" aria-labelledby="projects-heading">
     <div class="wrap">
       <div class="section-head">
         <p class="eyebrow">Featured units and projects</p>
@@ -94,16 +98,16 @@ const roles = (await getCollection('roles', (r) => !r.data.draft && (r.data.grou
               <p class="eyebrow">{p.data.school}</p>
               <h3>{p.data.title}</h3>
               <dl>
-                <div><dt>Context</dt><dd>{isTodo(p.data.context) ? <Todo text={p.data.context} /> : p.data.context}</dd></div>
-                <div><dt>What students did</dt><dd>{isTodo(p.data.studentsDid) ? <Todo text={p.data.studentsDid} /> : p.data.studentsDid}</dd></div>
-                <div><dt>What it showed about their learning</dt><dd>{isTodo(p.data.learning) ? <Todo text={p.data.learning} /> : p.data.learning}</dd></div>
+                {(!isTodo(p.data.context) || site.showTodos) && <div><dt>Context</dt><dd>{isTodo(p.data.context) ? <Todo text={p.data.context} /> : p.data.context}</dd></div>}
+                {(!isTodo(p.data.studentsDid) || site.showTodos) && <div><dt>What students did</dt><dd>{isTodo(p.data.studentsDid) ? <Todo text={p.data.studentsDid} /> : p.data.studentsDid}</dd></div>}
+                {(!isTodo(p.data.learning) || site.showTodos) && <div><dt>What it showed about their learning</dt><dd>{isTodo(p.data.learning) ? <Todo text={p.data.learning} /> : p.data.learning}</dd></div>}
               </dl>
             </div>
           </article>
         ))}
       </div>
     </div>
-  </section>
+  </section>}
 
   <section class="section section--tint" aria-labelledby="career-heading">
     <div class="wrap">
